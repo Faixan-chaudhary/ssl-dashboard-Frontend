@@ -1,5 +1,7 @@
 import { endpoints } from '../endpoints';
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
+import { handleApiResponse, handleUnauthorizedError } from '../../utils/authHandler';
+
 const urlParams = new URLSearchParams(window.location.search);
 const token = urlParams.get('token');
 
@@ -40,6 +42,12 @@ export const apiCreateDomainRequest = async (data, authToken) => {
       body: JSON.stringify(payload),
     });
 
+    // Handle 401 errors automatically
+    if (response.status === 401) {
+      handleUnauthorizedError();
+      return { error: 'Unauthorized - Redirecting to login' };
+    }
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(errorText);
@@ -73,6 +81,12 @@ export const apiCreateSSLRequest = async (data, authToken) => {
       },
       body: JSON.stringify(payload),
     });
+
+    // Handle 401 errors automatically
+    if (response.status === 401) {
+      handleUnauthorizedError();
+      return { error: 'Unauthorized - Redirecting to login' };
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -386,11 +400,11 @@ export const fetchDomain = async () => {
     }
 
     const data = await response.json();
-    console.log('Fetched SSL Data:', data);
+    console.log('Fetched Domain Data:', data);
 
     return data.data;
   } catch (error) {
-    console.error('SSL fetch failed:', error.message);
+    console.error('Domain fetch failed:', error.message);
     return { error: error.message };
   }
 };
@@ -401,6 +415,7 @@ export const fetchSSLByID = async (id) => {
         method: 'GET',
         headers: getAuthHeaders(),
       });
+      
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText);
@@ -445,6 +460,7 @@ export const fetchSSLByID = async (id) => {
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
       });
+      
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText);
@@ -462,6 +478,7 @@ export const fetchSSLByID = async (id) => {
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
       });
+      
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText);
@@ -523,6 +540,12 @@ export const requestRenewSSL = async (payload) => {
       },
       body: JSON.stringify(transformedPayload),
     });
+
+    // Handle 401 errors automatically
+    if (response.status === 401) {
+      handleUnauthorizedError();
+      return { error: 'Unauthorized - Redirecting to login' };
+    }
 
     if (!response.ok) {
       const errorText = await response.text();

@@ -12,6 +12,8 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -57,14 +59,17 @@ const FormDialog = ({
   const [formData, setFormData] = useState({
     domain: "",
     ssl: "",
+    certificate_type: "",
+    pricing_usd: "",
     no_of_days: "",
     start_date: "",
     expiry_date: "",
     current_registration: "",
-    description: "",
-    duration: 1,
+    notes: "",
+    duration: [],
     authority: "Godaddy",
-    link: "",
+    vendor: "",
+    po_status: "Po Pending",
   });
 
   console.log("****************", category);
@@ -115,10 +120,13 @@ const FormDialog = ({
         start_date,
         expiry_date,
         current_registration,
-        description,
+        notes,
         duration,
         authority,
-        link,
+        vendor,
+        certificate_type,
+        pricing_usd,
+        po_status,
       } = domainData?.data;
 
       setFormData({
@@ -127,10 +135,13 @@ const FormDialog = ({
         start_date: start_date ? start_date.split("T")[0] : "",
         expiry_date: expiry_date ? expiry_date.split("T")[0] : "",
         current_registration: current_registration || "",
-        description: description || "",
-        duration: duration ? Number(duration) : 1,
+        notes: notes || "",
+        duration: Array.isArray(duration) ? duration : duration ? [Number(duration)] : [],
         authority: authority || "Godaddy",
-        link: link || "",
+        vendor: vendor || "",
+        certificate_type: certificate_type || "",
+        pricing_usd: pricing_usd || "",
+        po_status: po_status || "Po Pending",
       });
     }
 
@@ -141,24 +152,30 @@ const FormDialog = ({
         start_date,
         expiry_date,
         current_registration,
-        description,
+        notes,
         duration,
         authority,
-        link,
+        vendor,
+        certificate_type,
+        pricing_usd,
+        po_status,
       } = sslData.data;
 
       setPreviousDate(expiry_date ? expiry_date.split("T")[0] : "");
 
       setFormData({
         ssl: ssl || "",
+        certificate_type: certificate_type || "",
+        pricing_usd: pricing_usd || "",
         no_of_days: no_of_days || "",
         start_date: start_date ? start_date.split("T")[0] : "",
         expiry_date: expiry_date ? expiry_date.split("T")[0] : "",
         current_registration: current_registration || "",
-        description: description || "",
-        duration: duration ? Number(duration) : 1,
+        notes: notes || "",
+        duration: Array.isArray(duration) ? duration : duration ? [Number(duration)] : [],
         authority: authority || "Godaddy",
-        link: link || "",
+        vendor: vendor || "",
+        po_status: po_status || "Po Pending",
       });
     }
   }, [edit, id, open, category, domainData?.data, sslData?.data]);
@@ -192,10 +209,19 @@ const FormDialog = ({
   const handleCancel = () => {
     setOpen(false);
     setFormData({
-      name: "",
+      domain: "",
+      ssl: "",
+      certificate_type: "",
+      pricing_usd: "",
+      no_of_days: "",
       start_date: "",
       expiry_date: "",
-      // add other fields from your formData here...
+      current_registration: "",
+      notes: "",
+      duration: [],
+      authority: "Godaddy",
+      vendor: "",
+      po_status: "Po Pending",
     });
   };
 
@@ -224,10 +250,19 @@ const FormDialog = ({
           toast.success(response.message);
           handleClose();
           setFormData({
-            name: "",
+            domain: "",
+            ssl: "",
+            certificate_type: "",
+            pricing_usd: "",
+            no_of_days: "",
             start_date: "",
             expiry_date: "",
-            // clear other fields as needed...
+            current_registration: "",
+            notes: "",
+            duration: [],
+            authority: "Godaddy",
+            vendor: "",
+            po_status: "Po Pending",
           });
           domainRefetch();
         }
@@ -239,10 +274,19 @@ const FormDialog = ({
           toast.success(response.message);
           handleClose();
           setFormData({
-            name: "",
+            domain: "",
+            ssl: "",
+            certificate_type: "",
+            pricing_usd: "",
+            no_of_days: "",
             start_date: "",
             expiry_date: "",
-            // clear other fields as needed...
+            current_registration: "",
+            notes: "",
+            duration: [],
+            authority: "Godaddy",
+            vendor: "",
+            po_status: "Po Pending",
           });
           domainRefetch();
         } else {
@@ -258,10 +302,19 @@ const FormDialog = ({
         toast.success("SSL updated successfully");
         handleClose();
         setFormData({
-          name: "",
+          domain: "",
+          ssl: "",
+          certificate_type: "",
+          pricing_usd: "",
+          no_of_days: "",
           start_date: "",
           expiry_date: "",
-          // clear other fields as needed...
+          current_registration: "",
+          notes: "",
+          duration: [],
+          authority: "Godaddy",
+          vendor: "",
+          po_status: "Po Pending",
         });
         sslRefetch();
       } else {
@@ -272,10 +325,19 @@ const FormDialog = ({
           toast.success(response.message);
           handleClose();
           setFormData({
-            name: "",
+            domain: "",
+            ssl: "",
+            certificate_type: "",
+            pricing_usd: "",
+            no_of_days: "",
             start_date: "",
             expiry_date: "",
-            // clear other fields as needed...
+            current_registration: "",
+            notes: "",
+            duration: [],
+            authority: "Godaddy",
+            vendor: "",
+            po_status: "Po Pending",
           });
         } else {
           const error = response.error
@@ -295,7 +357,7 @@ const FormDialog = ({
         <Box
           sx={{ width: "100%", display: "flex", flexDirection: "row-reverse" }}
         >
-          {(isSSLPage || isDomainPage) && (
+          {/* {(isSSLPage || isDomainPage) && (
             <Button
               variant="contained"
               onClick={() => {
@@ -306,7 +368,7 @@ const FormDialog = ({
             >
               {isSSLPage ? "Add SSL" : "Add Domain"}
             </Button>
-          )}
+          )} */}
         </Box>
       )}
 
@@ -368,52 +430,95 @@ const FormDialog = ({
                   }}
                 >
                   <option value="Godaddy">Godaddy</option>
-                  <option value="Digicert">Digicert</option>
+                  <option value="PKNIC">PKNIC</option>
                 </select>
               </FormControl>
               <TextField
-                name="description"
-                label="Description"
-                value={formData.description}
+                name="notes"
+                label="Notes"
+                value={formData.notes}
                 onChange={handleChange}
                 fullWidth
                 margin="dense"
                 multiline
                 rows={3}
               />
+              <FormControl fullWidth margin="dense">
+                <FormLabel>Vendor</FormLabel>
+                <Select
+                  name="vendor"
+                  value={formData.vendor}
+                  onChange={handleChange}
+                  displayEmpty
+                  sx={{ mt: 1 }}
+                >
+                  <MenuItem value="">
+                    <em>Select Vendor</em>
+                  </MenuItem>
+                  <MenuItem value="AHamson">AHamson</MenuItem>
+                  <MenuItem value="Old Vendor">Old Vendor</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth margin="dense" required>
+                <FormLabel>Duration</FormLabel>
+                <Select
+                  name="duration"
+                  multiple
+                  displayEmpty
+                  value={Array.isArray(formData.duration) ? formData.duration : []}
+                  onChange={(e) => {
+                    const value = typeof e.target.value === "string"
+                      ? e.target.value.split(",")
+                      : e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      duration: value.map(Number),
+                    }));
+                  }}
+                  renderValue={(selected) =>
+                    !selected || !Array.isArray(selected) || selected.length === 0
+                      ? <span style={{ color: '#aaa' }}>Select duration</span>
+                      : selected.map((val) => `${val} Year${val > 1 ? "s" : ""}`).join(", ")
+                  }
+                  sx={{ mt: 1 }}
+                >
+                  <MenuItem value={1}>1 Year</MenuItem>
+                  <MenuItem value={2}>2 Years</MenuItem>
+                  <MenuItem value={3}>3 Years</MenuItem>
+                </Select>
+              </FormControl>
+
               <TextField
-                name="link"
-                label="Link"
-                value={formData.link}
+                name="certificate_type"
+                label="TLD (Top Level Domain)"
+                value={formData.certificate_type}
                 onChange={handleChange}
                 fullWidth
                 margin="dense"
+                required
               />
-
-              <FormControl component="fieldset" sx={{ mt: 2 }}>
-                <FormLabel component="legend">Duration</FormLabel>
-                <RadioGroup
-                  row
-                  name="duration"
-                  value={formData.duration}
+              <TextField
+                name="pricing_usd"
+                label="Pricing USD"
+                value={formData.pricing_usd}
+                onChange={handleChange}
+                fullWidth
+                margin="dense"
+                type="number"
+                required
+              />
+              <FormControl fullWidth margin="dense" required>
+                <FormLabel>PO Status</FormLabel>
+                <Select
+                  name="po_status"
+                  value={formData.po_status}
                   onChange={handleChange}
+                  sx={{ mt: 1 }}
                 >
-                  <FormControlLabel
-                    value={"1"}
-                    control={<Radio />}
-                    label="1 Year"
-                  />
-                  <FormControlLabel
-                    value={"2"}
-                    control={<Radio />}
-                    label="2 Years"
-                  />
-                  <FormControlLabel
-                    value={"3"}
-                    control={<Radio />}
-                    label="3 Years"
-                  />
-                </RadioGroup>
+                  <MenuItem value="Po Received">Po Received</MenuItem>
+                  <MenuItem value="Po Pending">Po Pending</MenuItem>
+                </Select>
               </FormControl>
             </form>
           )}

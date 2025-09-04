@@ -71,7 +71,7 @@ const ResponsiveAppBar = ({ drawerWidth, handleDrawerToggle }) => {
                 textDecoration: "none",
               }}
             >
-       NetShield       
+       AHamson       
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -107,13 +107,31 @@ const ResponsiveAppBar = ({ drawerWidth, handleDrawerToggle }) => {
               textDecoration: "none",
             }}
           >
-       NetShield     
+       AHamson     
           </Typography>
     
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar 
+                  alt="Admin User" 
+                  sx={{
+                    width: 42,
+                    height: 42,
+                    background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
+                    border: "2px solid rgba(255,255,255,0.8)",
+                    fontSize: "1.1rem",
+                    fontWeight: 600,
+                    boxShadow: "0 2px 8px rgba(79, 70, 229, 0.3)",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: "0 4px 12px rgba(79, 70, 229, 0.4)",
+                      transform: "scale(1.05)",
+                    }
+                  }}
+                >
+                  A
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
