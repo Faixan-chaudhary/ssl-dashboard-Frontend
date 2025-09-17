@@ -559,6 +559,34 @@ export const requestRenewSSL = async (payload) => {
   }
 };
 
+export const apiDeleteSSLRequest = async (id) => {
+  try {
+    const response = await fetch(endpoints.ssl.delete(id), {
+      method: "DELETE",
+      headers: {
+        ...getAuthHeaders(),
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Handle 401 errors automatically
+    if (response.status === 401) {
+      handleUnauthorizedError();
+      return { error: 'Unauthorized - Redirecting to login' };
+    }
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Delete SSL failed:", error.message);
+    return { error: error.message };
+  }
+};
+
 
 
   

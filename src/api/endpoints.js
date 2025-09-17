@@ -18,6 +18,7 @@ export const endpoints = {
       update:  (id) => `${baseUrl}/ssl/update_ssl/${id}`,
       list: `${baseUrl}/ssl/ssl_list`,
       get: (id) => `${baseUrl}/ssl/find_ssl/${id}`,
+      delete: (id) => `${baseUrl}/ssl/delete_ssl/${id}`,
       // requestRenew: (id) => `${baseUrl}/approve_ssl/${id}`,
       status: {
         update:  (id) =>   `${baseUrl}/user/approve_ssl/${id}`,

@@ -489,15 +489,38 @@ const FormDialog = ({
                 </Select>
               </FormControl>
 
-              <TextField
-                name="certificate_type"
-                label="TLD (Top Level Domain)"
-                value={formData.certificate_type}
-                onChange={handleChange}
-                fullWidth
-                margin="dense"
-                required
-              />
+              {isSSLPage || category === "SSL" ? (
+                <FormControl fullWidth margin="dense" required>
+                  <FormLabel>Certificate Type</FormLabel>
+                  <Select
+                    name="certificate_type"
+                    value={formData.certificate_type}
+                    onChange={handleChange}
+                    displayEmpty
+                    sx={{ mt: 1 }}
+                  >
+                    <MenuItem value="">
+                      <em>Select Certificate Type</em>
+                    </MenuItem>
+                    <MenuItem value="Single Domain - GoDaddy">Single Domain - GoDaddy</MenuItem>
+                    <MenuItem value="Wild Card - GoDaddy">Wild Card - GoDaddy</MenuItem>
+                    <MenuItem value="SAN Entry set: 5 SANs - GoDaddy">SAN Entry set: 5 SANs - GoDaddy</MenuItem>
+                    <MenuItem value="SAN Entry set: 15 SANs - GoDaddy">SAN Entry set: 15 SANs - GoDaddy</MenuItem>
+                    <MenuItem value="Single Domain - DigiCert">Single Domain - DigiCert</MenuItem>
+                    <MenuItem value="Multi Domain - DigiCert">Multi Domain - DigiCert</MenuItem>
+                  </Select>
+                </FormControl>
+              ) : (
+                <TextField
+                  name="certificate_type"
+                  label="TLD (Top Level Domain)"
+                  value={formData.certificate_type}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="dense"
+                  required
+                />
+              )}
               <TextField
                 name="pricing_usd"
                 label="Pricing USD"

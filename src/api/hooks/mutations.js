@@ -13,7 +13,8 @@ import {
   apiUpdateDomainRequest,
   requestRenewSSL,
   requestRenewDomain,
-  apiUpdateStatusSSL
+  apiUpdateStatusSSL,
+  apiDeleteSSLRequest
 } from "./action";
 import { useQuery } from "@tanstack/react-query";
 
@@ -365,6 +366,33 @@ export const useRequestRenewDomain = (options = {}) => {
 
   return {
     requestRenewDomain: mutation.mutate,
+    isLoading: mutation.isLoading,
+    isSuccess: mutation.isSuccess,
+    isError: mutation.isError,
+    error: mutation.error,
+    data: mutation.data,
+  };
+};
+
+export const useDeleteSSL = (options = {}) => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (id) => apiDeleteSSLRequest(id),
+    onSuccess: (data, variables) => {
+      console.log("SSL deleted successfully:", data);
+      // Invalidate and refetch SSL list
+      queryClient.invalidateQueries(["ssl"]);
+      queryClient.invalidateQueries(["sslList"]);
+    },
+    onError: (error) => {
+      console.error("Error deleting SSL:", error);
+    },
+    ...options,
+  });
+
+  return {
+    deleteSSL: mutation.mutate,
     isLoading: mutation.isLoading,
     isSuccess: mutation.isSuccess,
     isError: mutation.isError,
